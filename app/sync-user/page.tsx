@@ -36,7 +36,6 @@ async function page() {
         }
     })
 
-
     return redirect("/dashboard")
 }
 
