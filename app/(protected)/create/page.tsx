@@ -1,6 +1,10 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { createProject } from "@/lib/actions/projects.actions"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 interface CreateProps {
     repoUrl: string,
@@ -12,8 +16,20 @@ const page = () => {
 
     const { register, handleSubmit, reset } = useForm<CreateProps>()
 
-    const onSubmit = (data: CreateProps) => {
-        return true
+    const onSubmit = async (data: CreateProps) => {
+        const response = await createProject({
+            githubUrl: data.repoUrl,
+            projectName: data.projectName,
+            githubAccessToken: data.githubToken
+        })
+
+        if (response.status === 200) {
+            toast.success("Project created successfully")
+            reset()
+        }
+        else {
+            toast.error("Something went wrong")
+        }
     }
 
     return (

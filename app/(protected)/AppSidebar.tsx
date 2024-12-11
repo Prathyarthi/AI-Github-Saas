@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
@@ -34,13 +36,13 @@ const projects = [
         name: "Project 1",
     },
     {
-        name: "Project 1",
+        name: "Project 2",
     },
     {
-        name: "Project 1",
+        name: "Project 3",
     },
     {
-        name: "Project 1",
+        name: "Project 4",
     },
 ]
 
@@ -53,7 +55,7 @@ const AppSidebar = () => {
         <Sidebar collapsible="icon" variant="floating">
             <SidebarHeader>
                 <div className="flex items-center gap-2">
-                    <Image src='logo.png' width={40} height={40} alt="logo" />
+                    <Image src='/logo.png' width={40} height={40} alt="logo" />
                     {open && (
                         <h1 className="text-xl font-bold text-primary/80">RepoX</h1>
                     )}
