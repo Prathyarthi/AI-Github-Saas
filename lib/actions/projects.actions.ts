@@ -3,6 +3,7 @@
 import db from "@/prisma";
 import { getAuth } from "@clerk/nextjs/server";
 import { currentProfile } from "../current-profile";
+import { revalidatePath } from "next/cache";
 
 interface CreateProps {
     githubUrl: string,
@@ -30,3 +31,23 @@ export const createProject = async ({ githubUrl, projectName, githubAccessToken 
         data: project
     }
 };
+
+export const getProjects = async () => {
+    const user = await currentProfile()
+
+    const projects = await db.project.findMany({
+        where: {
+            UserToProject: {
+                some: {
+                    userId: user!.id
+                }
+            },
+            deletedAt: null
+        }
+    })
+
+    return {
+        status: 200,
+        data: projects
+    }
+}

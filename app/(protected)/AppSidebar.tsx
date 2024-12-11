@@ -2,11 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
+import { useProjects } from "@/hooks/use-project"
+import { getProjects } from "@/lib/actions/projects.actions"
 import { cn } from "@/lib/utils"
 import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 
 const items = [
     {
@@ -31,25 +34,11 @@ const items = [
     }
 ]
 
-const projects = [
-    {
-        name: "Project 1",
-    },
-    {
-        name: "Project 2",
-    },
-    {
-        name: "Project 3",
-    },
-    {
-        name: "Project 4",
-    },
-]
-
 const AppSidebar = () => {
 
     const pathname = usePathname()
     const { open } = useSidebar()
+    const { projects, selectedProject, setSelectedProject } = useProjects()
 
     return (
         <Sidebar collapsible="icon" variant="floating">
@@ -74,7 +63,10 @@ const AppSidebar = () => {
                                     <SidebarMenuButton asChild>
                                         <Link href={item.url} className={cn({
                                             '!bg-primary !text-white': pathname === item.url
-                                        })} />
+                                        })} >
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -88,14 +80,14 @@ const AppSidebar = () => {
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {projects.map((project) => (
+                            {projects?.map((project) => (
                                 <SidebarMenuItem key={project.name}>
                                     <SidebarMenuButton asChild>
-                                        <div>
+                                        <div onClick={() => setSelectedProject(project.id)}>
                                             <div className={cn(
-                                                "rounded-sm border sixze-6 flex justify-center items-center text-sm bg-white text-primary",
+                                                "rounded-sm border size-6 flex justify-center items-center text-sm bg-white text-primary",
                                                 {
-                                                    // "bg-primary text-white": project.id === project.id
+                                                    "bg-primary text-white": project.id === selectedProject
                                                 }
                                             )}>
                                                 {project.name[0]}
