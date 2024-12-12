@@ -4,6 +4,7 @@ import db from "@/prisma";
 import { getAuth } from "@clerk/nextjs/server";
 import { currentProfile } from "../current-profile";
 import { revalidatePath } from "next/cache";
+import { pollCommits } from "../github";
 
 interface CreateProps {
     githubUrl: string,
@@ -25,6 +26,8 @@ export const createProject = async ({ githubUrl, projectName, githubAccessToken 
             }
         }
     })
+
+    await pollCommits(project.id)
 
     return {
         status: 200,
