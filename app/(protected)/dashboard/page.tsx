@@ -3,6 +3,7 @@
 import { useProjects } from "@/hooks/use-project"
 import { ExternalLink, Github } from "lucide-react"
 import Link from "next/link"
+import CommitLog from "./CommitLog"
 
 function page() {
 
@@ -43,7 +44,7 @@ function page() {
       </div>
 
       <div className="mt-8">
-        Commit Log
+        <CommitLog />
       </div>
     </div>
   )

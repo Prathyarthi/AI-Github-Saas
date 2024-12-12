@@ -1,9 +1,7 @@
 "use server";
 
 import db from "@/prisma";
-import { getAuth } from "@clerk/nextjs/server";
 import { currentProfile } from "../current-profile";
-import { revalidatePath } from "next/cache";
 import { pollCommits } from "../github";
 
 interface CreateProps {
@@ -14,7 +12,7 @@ interface CreateProps {
 export const createProject = async ({ githubUrl, projectName, githubAccessToken }: CreateProps) => {
     const user = await currentProfile()
 
-    const project = db.project.create({
+    const project = await db.project.create({
         data: {
             name: projectName,
             githubUrl: githubUrl,
@@ -53,4 +51,15 @@ export const getProjects = async () => {
         status: 200,
         data: projects
     }
+}
+
+export const getCommitLogs = async (projectId: string) => {
+    await pollCommits(projectId)
+    const commits = await db.commit.findMany({
+        where: {
+            projectId
+        }
+    })
+
+    return commits
 }

@@ -7,8 +7,6 @@ export const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN
 })
 
-const githubUrl = ''
-
 interface CommitProps {
     commitHash: string
     commitMessage: string
@@ -37,11 +35,17 @@ export const getCommitHashes = async (githubUrl: string): Promise<CommitProps[]>
 export const pollCommits = async (projectId: string) => {
     const { project, githubUrl } = await fetchProjectGithubUrl(projectId)
     const commitHashes = await getCommitHashes(githubUrl)
+    console.log(commitHashes);
+    
     const unprocessedCommits = await filterUnprocessedCommits(projectId, commitHashes)
 
+    console.log("Unprocessed commits: ", unprocessedCommits);
+    
     const summaryResponses = await Promise.allSettled(unprocessedCommits.map((commit) => {
         return summarizeCommit(githubUrl, commit.commitHash)
     }))
+    console.log(summaryResponses);
+    
 
     const summaries = summaryResponses.map((response) => {
         if (response.status === 'fulfilled') {
@@ -64,6 +68,8 @@ export const pollCommits = async (projectId: string) => {
             }
         })
     })
+    console.log(commits);
+
 
     return commits
 }
@@ -74,6 +80,9 @@ async function summarizeCommit(githubUrl: string, commitHash: string) {
             Accept: 'application/vnd.github.v3.diff'
         }
     })
+
+    console.log(data);
+    
 
     return await aiSummarizeContent(data) || ""
 }
