@@ -105,7 +105,7 @@ const CommitLog = () => {
 
     return (
         <ul className="space-y-6">
-            {commits.map((commit, commitIndex) => (
+            {commits?.map((commit, commitIndex) => (
                 <li key={commit.commitHash} className="relative flex gap-x-4">
                     {/* Vertical Line */}
                     <div

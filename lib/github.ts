@@ -23,29 +23,24 @@ export const getCommitHashes = async (githubUrl: string): Promise<CommitProps[]>
 
     const sortedCommit = data.sort((a: any, b: any) => new Date(b.commit.author?.date).getTime() - new Date(a.commit.author?.date).getTime()) as any[]
 
-    return sortedCommit.slice(0, 10).map((commit) => ({
-        commitHash: commit.sha,
-        commitMessage: commit.commit.message,
-        commitAuthorName: commit.commit.author.name,
-        commitAvatar: commit.commit.author.avatar_url,
-        commitDate: commit.commit.author.date
+    return sortedCommit.slice(0, 10).map((commit: any) => ({
+        commitHash: commit.sha as string,
+        commitMessage: commit.commit.message ?? "",
+        commitAuthorName: commit.commit.author.name ?? "",
+        commitAvatar: commit?.commit.author?.avatar_url ?? "",
+        commitDate: commit.commit.author.date ?? ""
     }))
 }
 
 export const pollCommits = async (projectId: string) => {
     const { project, githubUrl } = await fetchProjectGithubUrl(projectId)
     const commitHashes = await getCommitHashes(githubUrl)
-    console.log(commitHashes);
-    
+
     const unprocessedCommits = await filterUnprocessedCommits(projectId, commitHashes)
 
-    console.log("Unprocessed commits: ", unprocessedCommits);
-    
     const summaryResponses = await Promise.allSettled(unprocessedCommits.map((commit) => {
         return summarizeCommit(githubUrl, commit.commitHash)
     }))
-    console.log(summaryResponses);
-    
 
     const summaries = summaryResponses.map((response) => {
         if (response.status === 'fulfilled') {
@@ -68,21 +63,20 @@ export const pollCommits = async (projectId: string) => {
             }
         })
     })
-    console.log(commits);
-
 
     return commits
 }
 
 async function summarizeCommit(githubUrl: string, commitHash: string) {
-    const { data } = await axios.get(`${githubUrl}/commits/${commitHash}.diff`, {
+    const { data } = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
         headers: {
             Accept: 'application/vnd.github.v3.diff'
         }
     })
 
-    console.log(data);
-    
+    if (!data) {
+        return 'Not found'
+    }
 
     return await aiSummarizeContent(data) || ""
 }
@@ -109,13 +103,10 @@ async function filterUnprocessedCommits(projectId: string, commitHashes: CommitP
         where: {
             id: projectId
         },
-        select: {
-            commitHash: true
-        }
     })
 
     const unprocessedCommits = commitHashes.filter((commit) => {
-        !processedCommits?.some((processedCommit: any) => processedCommit.commitHash === commit.commitHash)
+        return !processedCommits?.some((processedCommit: any) => processedCommit.commitHash === commit.commitHash)
     })
 
     return unprocessedCommits

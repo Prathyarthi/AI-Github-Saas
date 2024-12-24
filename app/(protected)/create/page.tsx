@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { createProject } from "@/lib/actions/projects.actions"
-import { revalidatePath } from "next/cache"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 

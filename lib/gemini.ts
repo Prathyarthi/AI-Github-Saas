@@ -40,9 +40,5 @@ export const aiSummarizeContent = async (diff: string) => {
         `Please summarize the following diff file: \n\n${diff}`,
     ])
 
-    console.log(response);
-    console.log(response.response.text());
-    
-
     return response.response.text()
 }
