@@ -4,6 +4,7 @@ import { useProjects } from "@/hooks/use-project"
 import { ExternalLink, Github } from "lucide-react"
 import Link from "next/link"
 import CommitLog from "./CommitLog"
+import AskQuestion from "./AskQuestion"
 
 function page() {
 
@@ -39,7 +40,7 @@ function page() {
 
       <div className="mt-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-          Ask
+          <AskQuestion />
           Meeting
         </div>
       </div>
