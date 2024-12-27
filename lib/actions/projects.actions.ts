@@ -3,6 +3,7 @@
 import db from "@/prisma";
 import { currentProfile } from "../current-profile";
 import { pollCommits } from "../github";
+import { indexGithubRepo } from "../github-loader";
 
 interface CreateProps {
     githubUrl: string,
@@ -25,6 +26,7 @@ export const createProject = async ({ githubUrl, projectName, githubAccessToken 
         }
     })
 
+    await indexGithubRepo(project.id, githubUrl, githubAccessToken)
     await pollCommits(project.id)
 
     return {
